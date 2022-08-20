@@ -1,19 +1,14 @@
 const express    = require('express');
 const mongoose   = require('mongoose');
 const bodyParser = require('body-parser');
+const Database   = require('./config/database');
+const CONFIG     = require('./config/config');
 const app        = express();
 const port       = 3000;
+
+Database.connect();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}))
 
-mongoose
-  .connect(
-    'mongodb://mongo:27017/social-network-api',
-    { useNewUrlParser: true }
-  )
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.log(err));
-
-
-app.listen(port, () => console.log('Server running...'));
+app.listen(CONFIG.PORT, () => console.log('Server running...'));
