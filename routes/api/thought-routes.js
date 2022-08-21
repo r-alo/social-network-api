@@ -13,7 +13,21 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const createThought = await Thought.create(req.body);
+  const reaction = {
+    reactionBody: req.body.thoughtText,
+    username: req.body.username,
+  }
+  const thoughtData = { ...req.body, reactions: [reaction] };
+  console.log(thoughtData);
+
+  const createThought = await Thought.create(thoughtData);
+
+  await User.findOneAndUpdate(
+    { _id: req.body.userId },
+    { $addToSet: { thoughts: createThought._id } },
+    { runValidators: true, new: true }
+  );
+
   res.json(createThought);
 });
 
@@ -33,14 +47,22 @@ router.delete('/:id', async (req, res) => {
 });
 
 router.post('/:thoughtId/reactions', async (req, res) => {
-  const createThought = await Thought.create(req.body);
-  res.json(createThought);
+  const { thoughtId } = req.params;
+  const createReactions = await Thought.findOneAndUpdate(
+    { _id: thoughtId },
+    { $addToSet: { reactions: req.body } },
+    { runValidators: true, new: true },
+  );
+  res.json(createReactions);
 });
 
-router.delete('/:thoughtId/reactions', async (req, res) => {
-  const { id } = req.params;
-  const thought = await Thought.findOne({_id: id});
-  res.json(thought);
+router.delete('/:thoughtId/reactions/:reactionId', async (req, res) => {
+  const { thoughtId, reactionId } = req.params;
+  const deletedThought = await Thought.findOneAndUpdate(
+    { _id: thoughtId },
+    { $pull: { reactions: { reactionId: reactionId } } }
+  );
+  res.json(deletedThought);
 });
 
 module.exports = router;

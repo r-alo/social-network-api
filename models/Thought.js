@@ -2,24 +2,22 @@ const mongoose = require('mongoose');
 
 const ReactionSchema = new mongoose.Schema({
     reactionId: {
-        type: String,
-        unique: true,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        default: new mongoose.Types.ObjectId() 
     },
     reactionBody: {
         type: String,
-        unique: true,
-        required: true
+        required: true,
+        maxLength: 280
     },
     username: {
         type: String,
-        unique: true,
         required: true
     },
     createdAt: {
-        type: String,
-        unique: true,
-        required: true
+        type: Date,
+        default: Date.now,
+        get: (date) => date.toLocaleDateString("es-MX"),
     },
 });
 
