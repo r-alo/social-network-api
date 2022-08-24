@@ -1,22 +1,26 @@
 const router = require('express').Router();
 const { User, Thought } = require('../../models');
 
+//Get all users
 router.get('/', async (req, res) => {
   const users = await User.find();
   res.json(users);
 });
 
+//Get user by Id
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const user = await User.findOne({_id: id});
   res.json(user);
 });
 
+//Create new user
 router.post('/', async (req, res) => {
   const createUser = await User.create(req.body);
   res.json(createUser);
 });
 
+// Update user by id
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const user = await User.findOneAndUpdate(
@@ -27,6 +31,7 @@ router.put('/:id', async (req, res) => {
   res.json(user);
 });
 
+//Delete user by id
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   const findUser = await User.findOne({ _id: id });
@@ -36,6 +41,7 @@ router.delete('/:id', async (req, res) => {
   res.json(findUser);
 });
 
+// Add friend to user list
 router.post('/:userId/friends/:friendId', async (req, res) => {
   const { userId, friendId } = req.params;
   const addFriend = await User.findOneAndUpdate(
@@ -46,6 +52,7 @@ router.post('/:userId/friends/:friendId', async (req, res) => {
   res.json(addFriend);
 });
 
+//Delete friend from user list
 router.delete('/:userId/friends/:friendId', async (req, res) => {
   const { userId, friendId } = req.params;
   const removeFriend = await User.findOneAndUpdate(
